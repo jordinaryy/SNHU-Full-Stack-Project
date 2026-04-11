@@ -7,12 +7,16 @@ var handlebars =require('hbs');
 
 var indexRouter = require('./app_server/routes/index');
 var travelRouter = require('./app_server/routes/travel');
+var apiRouter = require('./app_api/routes/index');
+var usersRouter = require('./app_server/routes/users');
+
+require('./app_api/models/db');
 
 var app = express();
 var port = 3000;
 
 
-handlebars.registerPartials(__dirname + '.app_server/views/partials');
+handlebars.registerPartials(__dirname + '/app_server/views/partials');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'app_server', 'views'));
@@ -26,6 +30,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/travel', travelRouter);
+//app.use('/users', usersRouter);
+app.use('/api', apiRouter);
+
 
 app.listen(port, () => {
     console.log(`server running at http://localhost:${port}`);
