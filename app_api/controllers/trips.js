@@ -34,13 +34,62 @@ const tripsFindByCode = async (req, res) => {
     }
 };
 
-module.exports = {
-    tripsList,
-    tripsFindByCode
+const tripsAddTrip = async (req, res) => {
+    const q = await Model
+        .create({
+            code: req.body.code,
+            name: req.body.name,
+            length: req.body.length,
+            start: req.body.start,
+            resort: req.body.resort,
+            perPerson: req.body.perPerson,
+            image: req.body.image,
+            description: req.body.description
+        });
+    console.log(q);
+    if (!q) {
+        return res
+        .status(400)
+        .json(err);
+    } else {
+        return res
+        .status(201)
+        .json(q);
+    }
 };
 
+const tripsUpdateTrip = async (req, res) => {
+    console.log(req.params);
+    console.log(req.body);
+    const q = await Model
+        .findOneAndUpdate(
+            { 'code': req.params.tripCode },
+            {
+                code: req.body.code,
+                name: req.body.name,
+                length: req.body.length,
+                start: req.body.start,
+                resort: req.body.resort,
+                perPerson: req.body.perPerson,
+                image: req.body.image,
+                description: req.body.description
+            }
+        )
+        .exec();
+    if (!q) {
+        return res
+        .status(400)
+        .json(err);
+    } else {
+        return res
+        .status(201)
+        .json(q);
+    }
+};
 
 module.exports = {
     tripsList,
-    tripsFindByCode
+    tripsFindByCode,
+    tripsAddTrip,
+    tripsUpdateTrip
 };
