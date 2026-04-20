@@ -4,6 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var handlebars =require('hbs');
+require('dotenv').config();
+var passport = require('passport');
+
 
 var indexRouter = require('./app_server/routes/index');
 var travelRouter = require('./app_server/routes/travel');
@@ -11,6 +14,7 @@ var apiRouter = require('./app_api/routes/index');
 var usersRouter = require('./app_server/routes/users');
 
 require('./app_api/models/db');
+require('./app_api/config/passport'); 
 
 var app = express();
 var port = 3000;
@@ -32,11 +36,20 @@ app.use('/', indexRouter);
 app.use('/travel', travelRouter);
 app.use('/api', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   next();
 });
+
 app.use('/api', apiRouter);
+
+app.use((err, req, res, next) => {
+    if(err.name === 'UnauthorizedError') {
+        res
+            .status(401)
+            .json({ "message": err.name + ": " + err.message });
+    }
+});
 
 
 app.listen(port, () => {
